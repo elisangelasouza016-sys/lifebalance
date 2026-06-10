@@ -3,6 +3,7 @@ from .q_agent import QLearningAgent
 
 
 def train_agent(episodes=1000):
+
     env = LifeBalanceEnvironment()
     agent = QLearningAgent(env.actions)
 
@@ -15,7 +16,11 @@ def train_agent(episodes=1000):
         total_reward = 0
 
         while not done:
-            action = agent.choose_action(state)
+
+            action = agent.choose_action(
+                state,
+                training=True
+            )
 
             next_state, reward, done, info = env.step(action)
 
@@ -31,15 +36,18 @@ def train_agent(episodes=1000):
 
         agent.decay_epsilon()
 
-        training_log.append({
-            "episode": episode + 1,
-            "reward": total_reward,
-            "energy": env.energy,
-            "health": env.health,
-            "stress": env.stress,
-            "pending_tasks": env.pending_tasks,
-            "burnout": env.energy <= 0,
-            "steps": env.step_count
-        })
+        training_log.append(
+            {
+                "episode": episode + 1,
+                "reward": total_reward,
+                "energy": env.energy,
+                "health": env.health,
+                "stress": env.stress,
+                "pending_tasks": env.pending_tasks,
+                "invisible_load": env.invisible_load,
+                "burnout": env.energy <= 0,
+                "steps": env.step_count,
+            }
+        )
 
     return agent, training_log

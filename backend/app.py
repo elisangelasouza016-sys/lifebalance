@@ -1,78 +1,88 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 
-from rl.trainer import train_agent, simulate_trained_agent
+from rl.trainer import train_agent
 
-app = Flask(__name__)
-CORS(app)
+st.set_page_config(
+    page_title="Athena Life Balance RL",
+    layout="wide"
+)
 
-LAST_TRAINING = {
-    "q_table": {},
-    "training_log": [],
-}
+st.title("Athena Life Balance RL")
 
+st.markdown("""
+Agente treinado com Q-Learning para equilibrar:
 
-@app.route("/api/status", methods=["GET"])
-def status():
-    return jsonify({
-        "status": "ok",
-        "project": "Athena Life Balance RL"
-    })
+- Energia
+- Saúde
+- Estresse
+- Pendências
 
+Objetivo:
+maximizar produtividade sem entrar em burnout.
+""")
 
-@app.route("/api/train", methods=["POST"])
-def train():
-    data = request.get_json() or {}
-    episodes = int(data.get("episodes", 1000))
+episodes = st.slider(
+    "Quantidade de episódios",
+    100,
+    10000,
+    2000,
+    100
+)
 
-    result = train_agent(episodes)
+if st.button("Treinar Athena"):
 
-    LAST_TRAINING["q_table"] = result["q_table"]
-    LAST_TRAINING["training_log"] = result["training_log"]
+    with st.spinner("Treinando agente..."):
 
-    return jsonify({
-        "message": "Treinamento concluído",
-        "episodes": result["episodes"],
-        "epsilon_final": result["epsilon_final"],
-        "last_10_episodes": result["training_log"][-10:],
-    })
+        agent, log = train_agent(episodes)
 
+    df = pd.DataFrame(log)
 
-@app.route("/api/metrics", methods=["GET"])
-def metrics():
-    log = LAST_TRAINING["training_log"]
+    st.success("Treinamento concluído")
 
-    if not log:
-        return jsonify({
-            "message": "Nenhum treinamento executado ainda."
-        })
+    col1, col2, col3, col4 = st.columns(4)
 
-    rewards = [item["total_reward"] for item in log]
-    burnouts = [item["burnout"] for item in log]
-    steps = [item["steps"] for item in log]
+    col1.metric(
+        "Recompensa Média",
+        round(df["reward"].mean(), 2)
+    )
 
-    return jsonify({
-        "episodes": len(log),
-        "average_reward": sum(rewards) / len(rewards),
-        "average_steps": sum(steps) / len(steps),
-        "burnout_rate": sum(burnouts) / len(burnouts),
-        "first_10": log[:10],
-        "last_10": log[-10:],
-    })
+    col2.metric(
+        "Passos Médios",
+        round(df["steps"].mean(), 2)
+    )
 
+    col3.metric(
+        "Burnout %",
+        round(df["burnout"].mean() * 100, 2)
+    )
 
-@app.route("/api/simulation", methods=["GET"])
-def simulation():
-    q_table = LAST_TRAINING["q_table"]
+    col4.metric(
+        "Energia Final Média",
+        round(df["energy"].mean(), 2)
+    )
 
-    if not q_table:
-        return jsonify({
-            "message": "Treine o agente antes de simular."
-        })
+    st.subheader("Evolução da recompensa")
 
-    result = simulate_trained_agent(q_table)
-    return jsonify(result)
+    fig, ax = plt.subplots()
 
+    ax.plot(df["episode"], df["reward"])
 
-if __name__ == "__main__":
-    app.run(debug=True)
+    ax.set_xlabel("Episódio")
+    ax.set_ylabel("Recompensa")
+
+    st.pyplot(fig)
+
+    st.subheader("Últimos episódios")
+
+    st.dataframe(
+        df.tail(20),
+        use_container_width=True
+    )
+
+    st.subheader("Melhor episódio")
+
+    best = df.loc[df["reward"].idxmax()]
+
+    st.json(best.to_dict())

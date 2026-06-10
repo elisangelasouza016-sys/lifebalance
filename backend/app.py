@@ -41,27 +41,22 @@ if st.button("Treinar Athena"):
 
     st.success("Treinamento concluído")
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
 
-    col1.metric(
-        "Recompensa Média",
-        round(df["reward"].mean(), 2)
-    )
+col1.metric(
+    "Recompensa Média",
+    round(df["reward"].mean(), 2)
+)
 
-    col2.metric(
-        "Passos Médios",
-        round(df["steps"].mean(), 2)
-    )
+col2.metric(
+    "Burnout %",
+    round(df["burnout"].mean() * 100, 2)
+)
 
-    col3.metric(
-        "Burnout %",
-        round(df["burnout"].mean() * 100, 2)
-    )
-
-    col4.metric(
-        "Energia Final Média",
-        round(df["energy"].mean(), 2)
-    )
+col3.metric(
+    "Passos Médios",
+    round(df["steps"].mean(), 2)
+)
 
     st.subheader("Evolução da recompensa")
 

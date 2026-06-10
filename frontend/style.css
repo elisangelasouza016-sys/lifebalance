@@ -1,39 +1,58 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Athena Life Balance RL</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <main>
-    <h1>Athena Life Balance RL</h1>
-    <p>Agente treinado por Q-learning para equilibrar energia, saúde, estresse e pendências.</p>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f2f7;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
 
-    <section class="controls">
-      <button onclick="trainAgent()">Treinar agente</button>
-      <button onclick="simulateAgent()">Simular agente treinado</button>
-      <button onclick="loadMetrics()">Ver métricas</button>
-    </section>
+main {
+  max-width: 900px;
+  margin: 40px auto;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+}
 
-    <section class="panel">
-      <h2>Métricas</h2>
-      <pre id="metrics">Nenhum dado carregado.</pre>
-    </section>
+h1 {
+  margin-top: 0;
+}
 
-    <section class="panel">
-      <h2>Simulação</h2>
-      <div id="state">
-        <p>Energia: -</p>
-        <p>Saúde: -</p>
-        <p>Estresse: -</p>
-        <p>Pendências: -</p>
-      </div>
-      <h3>Ações</h3>
-      <ol id="actions"></ol>
-    </section>
-  </main>
+.controls {
+  display: flex;
+  gap: 12px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
 
-  <script src="app.js"></script>
-</body>
-</html>
+button {
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.panel {
+  background: #fafafa;
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+pre {
+  white-space: pre-wrap;
+}
+
+#state {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+#state p {
+  background: #eee;
+  padding: 12px;
+  border-radius: 8px;
+}

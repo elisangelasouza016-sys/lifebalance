@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Athena Life Balance RL</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>Athena Life Balance RL</h1>
+    <p>Agente treinado por Q-learning para equilibrar energia, saúde, estresse e pendências.</p>
+
+    <section class="controls">
+      <button onclick="trainAgent()">Treinar agente</button>
+      <button onclick="simulateAgent()">Simular agente treinado</button>
+      <button onclick="loadMetrics()">Ver métricas</button>
+    </section>
+
+    <section class="panel">
+      <h2>Métricas</h2>
+      <pre id="metrics">Nenhum dado carregado.</pre>
+    </section>
+
+    <section class="panel">
+      <h2>Simulação</h2>
+      <div id="state">
+        <p>Energia: -</p>
+        <p>Saúde: -</p>
+        <p>Estresse: -</p>
+        <p>Pendências: -</p>
+      </div>
+      <h3>Ações</h3>
+      <ol id="actions"></ol>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
